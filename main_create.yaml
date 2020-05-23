@@ -1,0 +1,31 @@
+---
+- name: Create Instances
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  become: no
+  vars_files:
+    - config.yaml
+
+  tasks:
+  - include_role: 
+      name: createnetwork
+  - include_role:
+      name: createvm
+    vars:
+      vm_name: "{{ item.vm_name }}"
+      vm_machine_type: "{{ item.vm_machine_type }}"
+      vm_address_name: "{{ item.vm_address_name }}"
+      vm_group: "{{ item.vm_group }}"
+      disk_name: "{{ item.disk_name }}"
+      disk_size: "{{ item.disk_size }}"
+    with_items: "{{ instance_config }}"
+
+
+- name: Install Lab
+  hosts: kafka
+  gather_facts: yes
+
+  roles:
+  - installlab 
+
